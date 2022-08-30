@@ -2,6 +2,8 @@ use nokhwa::{Camera, CameraFormat, FrameFormat};
 use std::string::String;
 use std::time::{Duration, Instant};
 
+type Trial = fn(u64) -> ();
+
 fn candle(trial_length: u64) {
     // set up the Camera
     let mut camera = Camera::new(
@@ -72,7 +74,7 @@ fn rng(trial_length: u64) {
 fn capture_score(one_count: f64, zero_count: f64) -> f64 {
     let total: f64 = one_count + zero_count;
     let difference: f64 = (one_count - zero_count).abs();
-    return difference / total * 1000.0 as f64;
+    difference / total * 1000.0
 }
 
 fn record_stats(
@@ -188,10 +190,10 @@ fn get_duration() -> u64 {
     delay
 }
 
-fn get_expirement() -> function {
+fn get_experiment() -> Trial {
     let mut input: String = String::new();
     let trimmed: &str;
-    let expirement: function;
+    let mut experiment: Trial = rng;
     println!(" [1]: RNG");
     println!(" [2]: Candle Light Entropy");
     std::io::stdin()
@@ -201,21 +203,22 @@ fn get_expirement() -> function {
     match trimmed.parse::<usize>() {
         Ok(i) => {
             if i == 1 {
-                expirement = rng;
-            else if i == 2 {
-                expirement = candle;
+                experiment = rng;
+            } else if i == 2 {
+                experiment = candle;
             } else {
-                println!("This was not a unsigned integer between 1 and 2: {}", trimmed);
+                println!(
+                    "This was not a unsigned integer between 1 and 2: {}",
+                    trimmed
+                );
             }
         }
         Err(_e) => {
             println!("This was not a unsigned integer: {}", trimmed);
-            return 0;
         }
     };
-    delay
+    experiment
 }
-
 
 fn main() {
     // Prompt for delay before starting trial.
@@ -230,12 +233,13 @@ fn main() {
     // Prompt for a descriptor to classify the trials under.
     println!("Please input a descriptor if you are currently in an altered mental state:");
     let descriptor: String = get_string();
+    let experiment: Trial = get_experiment();
     bell();
     sleep(delay);
     bell();
     for i in 1..=trials {
         println!("Running trial {} of {}", i, trials);
         println!("Altered mental state: {}", descriptor);
-        candle(trial_length);
+        experiment(trial_length);
     }
 }
