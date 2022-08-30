@@ -24,7 +24,7 @@ fn candle(trial_length: u64) {
     }
 }
 
-fn experiment(trial_length: u64) {
+fn rng(trial_length: u64) {
     let mut seed: u8;
     let mut ones: Vec<u8> = Vec::new();
     let mut zeros: Vec<u8> = Vec::new();
@@ -187,6 +187,35 @@ fn get_duration() -> u64 {
     };
     delay
 }
+
+fn get_expirement() -> function {
+    let mut input: String = String::new();
+    let trimmed: &str;
+    let expirement: function;
+    println!(" [1]: RNG");
+    println!(" [2]: Candle Light Entropy");
+    std::io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line");
+    trimmed = input.trim();
+    match trimmed.parse::<usize>() {
+        Ok(i) => {
+            if i == 1 {
+                expirement = rng;
+            else if i == 2 {
+                expirement = candle;
+            } else {
+                println!("This was not a unsigned integer between 1 and 2: {}", trimmed);
+            }
+        }
+        Err(_e) => {
+            println!("This was not a unsigned integer: {}", trimmed);
+            return 0;
+        }
+    };
+    delay
+}
+
 
 fn main() {
     // Prompt for delay before starting trial.
