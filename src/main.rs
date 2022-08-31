@@ -20,11 +20,15 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
     loop {
         let frame = camera.frame().unwrap();
         let subdir = if active_trial { "trial" } else { "control" };
-        let now = SystemTime::now().duration_since(UNIX_EPOCH).as_secs();
+        let now: u64 = SystemTime::now().duration_since(UNIX_EPOCH)
+            .expect("Could not get system time").as_secs();
         let dir = format!("./experiments/{}/{}", output_dir, subdir);
         fs::create_dir_all(&dir).expect("Could not create output directories.");
         let path = format!("{}/{}.jpg", dir, now);
-        frame.save(path).expect("Could not save file.");
+        match frame.save(path) {
+            Ok(()) => println!("Camera output successfully saved."),
+            Err(..) => println!("Camera output could not be saved.")
+        }
         if Instant::now() >= stop_time {
             break;
         }
@@ -240,7 +244,8 @@ fn main() {
     // Prompt for a descriptor to classify the trials under.
     println!("Please input a descriptor if you are currently in an altered mental state:");
     let descriptor: String = get_string();
-    let now: u64 = SystemTime::now().duration_since(UNIX_EPOCH).as_secs();
+    let now: u64 = SystemTime::now().duration_since(UNIX_EPOCH)
+        .expect("Could not get system time").as_secs();
     bell();
     experiment(delay, format!("experiment-{}", now), false);
     bell();
