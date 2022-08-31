@@ -1,3 +1,4 @@
+use image::{ImageBuffer, Rgb};
 use nokhwa::{Camera, CameraFormat, FrameFormat};
 use std::fs;
 use std::string::String;
@@ -12,6 +13,8 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
         Some(CameraFormat::new_from(640, 480, FrameFormat::MJPEG, 30)),
     )
     .unwrap();
+    let mut frames = Vec::new();
+    let mut paths: Vec<String> = Vec::new();
     // open stream
     camera.open_stream().unwrap();
 
@@ -29,12 +32,17 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
         let dir = format!("./experiments/{}/{}", output_dir, subdir);
         fs::create_dir_all(&dir).expect("Could not create output directories.");
         let path = format!("{}/{i}-{}.jpg", dir, now);
-        match frame.save(path) {
-            Ok(()) => println!("Camera output successfully saved."),
-            Err(e) => println!("Camera output could not be saved. {:?}", e),
-        }
+        frames.push(frame);
+        paths.push(path);
         if Instant::now() >= stop_time {
             break;
+        }
+    }
+    camera.stop_stream().expect("Could not stop camera stream.");
+    for i in 0..=frames.len() {
+        match frames[i].save(paths.get(i).unwrap()) {
+            Ok(()) => println!("Saved image {} of {}.", i, frames.len()),
+            Err(e) => println!("Could not save image from camera! {}", e),
         }
     }
 }
