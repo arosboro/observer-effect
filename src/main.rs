@@ -1,7 +1,7 @@
 use nokhwa::{Camera, CameraFormat, FrameFormat};
+use std::fs;
 use std::string::String;
 use std::time::{Duration, Instant};
-extern crate image;
 
 type Trial = fn(u64, String, bool) -> ();
 
@@ -21,7 +21,9 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
         let frame = camera.frame().unwrap();
         let subdir = if active_trial { "trial" } else { "control" };
         let now = Instant::now();
-        let path = format!("./{}/{}/{:?}.png", output_dir, subdir, now);
+        let dir = format!("./{}/{}", output_dir, subdir);
+        fs::create_dir_all(&dir).expect("Could not create output directories.");
+        let path = format!("{}/{:?}.png", dir, now);
         frame.save(path).expect("Could not save file.");
 
         if Instant::now() >= stop_time {
