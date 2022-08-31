@@ -1,5 +1,6 @@
 use image::{ImageBuffer, Rgb};
 use nokhwa::{Camera, CameraFormat, FrameFormat};
+use shannon_entropy::ShannonEntropy;
 use std::fs;
 use std::string::String;
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
@@ -39,12 +40,16 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
         }
     }
     camera.stop_stream().expect("Could not stop camera stream.");
+    let mut energy_system: &str = "";
     for i in 0..=frames.len() {
-        match frames[i].save(paths.get(i).unwrap()) {
-            Ok(()) => println!("Saved image {} of {}.", i, frames.len()),
-            Err(e) => println!("Could not save image from camera! {}", e),
-        }
+        energy_system.push(frames.get(i).unwrap());
+        // match frames[i].save(paths.get(i).unwrap()) {
+        //     Ok(()) => println!("Saved image {} of {}.", i, frames.len()),
+        //     Err(e) => println!("Could not save image from camera! {}", e),
+        // }
     }
+    let mode = if active_trial { "trial" } else { "control" };
+    println!("Entropy of {} is {}", mode, energy_system.entropy());
 }
 
 fn rng(trial_length: u64, output_dir: String, active_trial: bool) {
