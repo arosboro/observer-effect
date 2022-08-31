@@ -1,10 +1,11 @@
 use nokhwa::{Camera, CameraFormat, FrameFormat};
 use std::string::String;
 use std::time::{Duration, Instant};
+extern crate image;
 
-type Trial = fn(u64) -> ();
+type Trial = fn(u64, String, bool) -> ();
 
-fn candle(trial_length: u64) {
+fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
     // set up the Camera
     let mut camera = Camera::new(
         0,
@@ -18,7 +19,10 @@ fn candle(trial_length: u64) {
     let stop_time = start_time + Duration::from_secs(trial_length);
     loop {
         let frame = camera.frame().unwrap();
-        println!("{}, {}", frame.width(), frame.height());
+        let subdir = if active_trial { "trial" } else { "control" };
+        let now = Instant::now();
+        let path = format!("./{}/{}/{:?}.png", output_dir, subdir, now);
+        frame.save(path).expect("Could not save file.");
 
         if Instant::now() >= stop_time {
             break;
@@ -26,7 +30,7 @@ fn candle(trial_length: u64) {
     }
 }
 
-fn rng(trial_length: u64) {
+fn rng(trial_length: u64, output_dir: String, active_trial: bool) {
     let mut seed: u8;
     let mut ones: Vec<u8> = Vec::new();
     let mut zeros: Vec<u8> = Vec::new();
@@ -221,6 +225,8 @@ fn get_experiment() -> Trial {
 }
 
 fn main() {
+    // Determine experiment.
+    let experiment: Trial = get_experiment();
     // Prompt for delay before starting trial.
     println!("Please enter a delay before starting the trial:");
     let delay: u64 = get_duration();
@@ -233,13 +239,13 @@ fn main() {
     // Prompt for a descriptor to classify the trials under.
     println!("Please input a descriptor if you are currently in an altered mental state:");
     let descriptor: String = get_string();
-    let experiment: Trial = get_experiment();
+    let now: Instant = Instant::now();
     bell();
-    sleep(delay);
+    experiment(delay, format!("experiment-{:?}", now), false);
     bell();
     for i in 1..=trials {
         println!("Running trial {} of {}", i, trials);
         println!("Altered mental state: {}", descriptor);
-        experiment(trial_length);
+        experiment(trial_length, format!("experiment-{:?}", now), true);
     }
 }
