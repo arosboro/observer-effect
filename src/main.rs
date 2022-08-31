@@ -17,17 +17,21 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
 
     let start_time = Instant::now();
     let stop_time = start_time + Duration::from_secs(trial_length);
+    let mut i: u8 = 0;
     loop {
+        i += 1;
         let frame = camera.frame().unwrap();
         let subdir = if active_trial { "trial" } else { "control" };
-        let now: u64 = SystemTime::now().duration_since(UNIX_EPOCH)
-            .expect("Could not get system time").as_secs();
+        let now: u64 = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("Could not get system time")
+            .as_secs();
         let dir = format!("./experiments/{}/{}", output_dir, subdir);
         fs::create_dir_all(&dir).expect("Could not create output directories.");
-        let path = format!("{}/{}.jpg", dir, now);
+        let path = format!("{}/{i}-{}.jpg", dir, now);
         match frame.save(path) {
             Ok(()) => println!("Camera output successfully saved."),
-            Err(..) => println!("Camera output could not be saved.")
+            Err(e) => println!("Camera output could not be saved. {:?}", e),
         }
         if Instant::now() >= stop_time {
             break;
@@ -244,14 +248,16 @@ fn main() {
     // Prompt for a descriptor to classify the trials under.
     println!("Please input a descriptor if you are currently in an altered mental state:");
     let descriptor: String = get_string();
-    let now: u64 = SystemTime::now().duration_since(UNIX_EPOCH)
-        .expect("Could not get system time").as_secs();
+    let now: u64 = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Could not get system time")
+        .as_secs();
     bell();
-    experiment(delay, format!("experiment-{}", now), false);
+    experiment(delay, format!("{}-{}", descriptor, now), false);
     bell();
     for i in 1..=trials {
         println!("Running trial {} of {}", i, trials);
         println!("Altered mental state: {}", descriptor);
-        experiment(trial_length, format!("experiment-{:?}", now), true);
+        experiment(trial_length, format!("{}-{:?}", descriptor, now), true);
     }
 }
