@@ -20,10 +20,10 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
     loop {
         let frame = camera.frame().unwrap();
         let subdir = if active_trial { "trial" } else { "control" };
-        let now = Instant::now();
-        let dir = format!("./{}/{}", output_dir, subdir);
+        let now = Instant::now().elapsed().as_secs();
+        let dir = format!("./experiments/{}/{}", output_dir, subdir);
         fs::create_dir_all(&dir).expect("Could not create output directories.");
-        let path = format!("{}/{:?}.png", dir, now);
+        let path = format!("{}/{}.jpeg", dir, now);
         frame.save(path).expect("Could not save file.");
 
         if Instant::now() >= stop_time {
@@ -241,9 +241,9 @@ fn main() {
     // Prompt for a descriptor to classify the trials under.
     println!("Please input a descriptor if you are currently in an altered mental state:");
     let descriptor: String = get_string();
-    let now: Instant = Instant::now();
+    let now: u64 = Instant::now().elapsed().as_secs();
     bell();
-    experiment(delay, format!("experiment-{:?}", now), false);
+    experiment(delay, format!("experiment-{}", now), false);
     bell();
     for i in 1..=trials {
         println!("Running trial {} of {}", i, trials);
