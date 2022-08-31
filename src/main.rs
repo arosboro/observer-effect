@@ -1,4 +1,5 @@
-use image::{ImageBuffer, Rgb};
+extern crate nokhwa;
+
 use nokhwa::{Camera, CameraFormat, FrameFormat};
 use std::fs;
 use std::string::String;
@@ -39,7 +40,7 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
         }
     }
     camera.stop_stream().expect("Could not stop camera stream.");
-    for i in 0..=frames.len() {
+    for i in 0..frames.len() {
         match frames[i].save(paths.get(i).unwrap()) {
             Ok(()) => println!("Saved image {} of {}.", i, frames.len()),
             Err(e) => println!("Could not save image from camera! {}", e),
@@ -47,7 +48,7 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
     }
 }
 
-fn rng(trial_length: u64, output_dir: String, active_trial: bool) {
+fn rng(trial_length: u64, _output_dir: String, _active_trial: bool) {
     let mut seed: u8;
     let mut ones: Vec<u8> = Vec::new();
     let mut zeros: Vec<u8> = Vec::new();
