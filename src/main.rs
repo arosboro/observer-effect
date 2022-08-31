@@ -8,7 +8,7 @@ type Trial = fn(u64, String, bool) -> ();
 fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
     // set up the Camera
     let mut camera = Camera::new(
-        0,
+        1,
         Some(CameraFormat::new_from(640, 480, FrameFormat::MJPEG, 30)),
     )
     .unwrap();
@@ -23,7 +23,7 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
         let now = Instant::now().elapsed().as_secs();
         let dir = format!("./experiments/{}/{}", output_dir, subdir);
         fs::create_dir_all(&dir).expect("Could not create output directories.");
-        let path = format!("{}/{}.png", dir, now);
+        let path = format!("{}/{}.jpg", dir, now);
         frame.save(path).expect("Could not save file.");
         if Instant::now() >= stop_time {
             break;
