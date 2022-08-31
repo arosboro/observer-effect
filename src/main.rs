@@ -1,4 +1,4 @@
-use crate::image::ImageFormat;
+use image::ImageFormat;
 use nokhwa::{Camera, CameraFormat, FrameFormat};
 use std::fs;
 use std::string::String;
