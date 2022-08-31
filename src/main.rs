@@ -1,7 +1,7 @@
 use nokhwa::{Camera, CameraFormat, FrameFormat};
 use std::fs;
 use std::string::String;
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 type Trial = fn(u64, String, bool) -> ();
 
@@ -20,7 +20,7 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
     loop {
         let frame = camera.frame().unwrap();
         let subdir = if active_trial { "trial" } else { "control" };
-        let now = Instant::now().elapsed().as_secs();
+        let now = SystemTime::now().duration_since(UNIX_EPOCH).as_secs();
         let dir = format!("./experiments/{}/{}", output_dir, subdir);
         fs::create_dir_all(&dir).expect("Could not create output directories.");
         let path = format!("{}/{}.jpg", dir, now);
@@ -240,7 +240,7 @@ fn main() {
     // Prompt for a descriptor to classify the trials under.
     println!("Please input a descriptor if you are currently in an altered mental state:");
     let descriptor: String = get_string();
-    let now: u64 = Instant::now().elapsed().as_secs();
+    let now: u64 = SystemTime::now().duration_since(UNIX_EPOCH).as_secs();
     bell();
     experiment(delay, format!("experiment-{}", now), false);
     bell();
