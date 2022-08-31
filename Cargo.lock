@@ -749,6 +749,7 @@ dependencies = [
  "image 0.24.3",
  "nokhwa",
  "rand",
+ "shannon-entropy",
 ]
 
 [[package]]
@@ -916,6 +917,12 @@ name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
+
+[[package]]
+name = "shannon-entropy"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8937fedcf3a0c1b756a3ef112f8b1739627e7020fb3623976b5e55351d3c4813"
 
 [[package]]
 name = "shlex"
