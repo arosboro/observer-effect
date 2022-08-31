@@ -1,4 +1,3 @@
-use image::ImageFormat;
 use nokhwa::{Camera, CameraFormat, FrameFormat};
 use std::fs;
 use std::string::String;
@@ -25,10 +24,7 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
         let dir = format!("./experiments/{}/{}", output_dir, subdir);
         fs::create_dir_all(&dir).expect("Could not create output directories.");
         let path = format!("{}/{}.png", dir, now);
-        frame
-            .save_with_format(path, ImageFormat::Png)
-            .expect("Could not save file.");
-
+        frame.save(path).expect("Could not save file.");
         if Instant::now() >= stop_time {
             break;
         }
