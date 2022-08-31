@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 rand = { version = "0.8.5"}
 nokhwa = { version = "0.9.4", features = ["input-v4l", "input-msmf", "input-avfoundation"]}
-image = { version = "0.24.3"}
+image = { version = "0.24.3", default-features = false, features = ["png", "jpeg"]}
