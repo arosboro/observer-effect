@@ -22,7 +22,7 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
 
     let start_time = Instant::now();
     let stop_time = start_time + Duration::from_secs(trial_length);
-    let mut i: u8 = 0;
+    let mut i: u64 = 0;
     loop {
         i += 1;
         let frame = camera.frame().unwrap();
