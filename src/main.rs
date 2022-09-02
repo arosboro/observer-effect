@@ -11,7 +11,7 @@ fn candle(trial_length: u64, output_dir: String, active_trial: bool) {
     // set up the Camera
     let mut camera = Camera::new(
         1,
-        Some(CameraFormat::new_from(640, 480, FrameFormat::MJPEG, 30)),
+        Some(CameraFormat::new_from(640, 480, FrameFormat::MJPEG, 1)),
     )
     .unwrap();
     let mut frames = Vec::new();
